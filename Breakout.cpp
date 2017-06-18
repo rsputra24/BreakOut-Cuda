@@ -36,10 +36,9 @@ void Engine::Breakout::display(void) {
     glOrtho(0.0f, WINWIDTH, WINHEIGHT, 0.0f, 0.0f, 1.0f);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-
-	renderBackground();
 	
-    //drawBackground();
+	renderBackground();
+  
 
     // Select which state of the game to display
     switch (gameState) {
@@ -54,6 +53,7 @@ void Engine::Breakout::display(void) {
             break;
             
         case Gameplay:
+			
             // Draw the game
 			if (showgame == true) {
 				drawGame();
@@ -64,7 +64,7 @@ void Engine::Breakout::display(void) {
 					reward = 100;
 				}
 				else if (balls.size() <= 0) {
-					drawAfterGameGUI("AH lemah gan... booo");
+					drawAfterGameGUI("AH lemah gan... booo", score);
 				}
 
 				// If no bricks, player wins the level
@@ -73,7 +73,7 @@ void Engine::Breakout::display(void) {
 					initBricks();
 				}
 				else if (bricks.size() <= 0) {
-					drawAfterGameGUI("WEW mantap gan!!..");
+					drawAfterGameGUI("WEW mantap gan!!..", score);
 				}
 			}
             break;
@@ -83,7 +83,9 @@ void Engine::Breakout::display(void) {
             break;
         
         default:
+			
             break;
+			//glDisable(GL_TEXTURE_2D);
     }
     
     //glutTimerFunc(TIMER, recomputeFrame, 0);
@@ -97,14 +99,7 @@ void recomputeFrame(int value) {
 
 void Engine::Breakout::renderBackground() {
 
-	/*mat4 model, model2, view, projection;
-	model = translate(model, vec3(position.x, position.y + 1, position.z));
-	model = rotate(model, rotation, axisRotation);
-	model2 = scale(model2, vec3(35, 0, 35));
-	// LookAt camera (position, target/direction, up)
-	view = lookAt(vec3(position.x + 10, position.y + 15, position.z), vec3(position.x, position.y, position.z), vec3(0.0f, 1.0f, 0.0f));
-	// Perspective projection
-	projection = perspective(45.0f, (GLfloat)this->screenWidth / (GLfloat)this->screenHeight, 0.1f, 1000.0f);*/
+	
 
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -113,18 +108,14 @@ void Engine::Breakout::renderBackground() {
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, textureBG);
 
-	//GLint model2Loc = glGetUniformLocation(this->programBG, "model");
-	//GLint view2Loc = glGetUniformLocation(this->programBG, "view");
-	//GLint proj2Loc = glGetUniformLocation(this->programBG, "projection");
+	
 	UseShader(this->programBG);
-	//glUniformMatrix4fv(view2Loc, 1, GL_FALSE, glm::value_ptr(view));
-	//glUniformMatrix4fv(proj2Loc, 1, GL_FALSE, glm::value_ptr(projection));
-	//glUniformMatrix4fv(model2Loc, 1, GL_FALSE, glm::value_ptr(model2));
+	
 	glBindVertexArray(VAO);
 	glDrawElements(GL_QUADS, 4, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);
 
-	glBindTexture(GL_TEXTURE_2D, 0); // Unbind texture when done, so we won't accidentily mess up our texture.
+	glBindTexture(GL_TEXTURE_2D, 0); 
 	glDisable(GL_BLEND);
 	
 }
@@ -187,14 +178,14 @@ void Engine::Breakout::buildBackgroundImage() {
 }
 
 void Engine::Breakout::init(void) {
+
     // Reset game statistics
 	ImGui_ImplSdlGL3_Init(this->window);
 	
 	glewInit();
-	//drawCircle();
 
 	buildBackgroundImage();
-
+	
     score = 0;
     level = 1;
     reward = 100;
@@ -217,28 +208,10 @@ void Engine::Breakout::init(void) {
     gameState = Engine::Breakout::Menus;
 }
 
-void Engine::Breakout::drawBackground(void) {
-    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-    glBegin(GL_QUADS);
-    // Top color
-    glColor3f(0.3f, 0.3f, 0.3f);
-    glVertex2f(WINWIDTH, WINHEIGHT);
-    glVertex2f(-WINWIDTH, WINHEIGHT);
-    // Bottom color
-    glColor3f(0.0f, 0.0f, 0.0f);
-    glVertex2f(0.0f, 0.0f);
-    glVertex2f(0.0f, 0.0f);
-    glEnd();
-	//renderer = SDL_CreateRenderer(window, 1, SDL_RENDERER_ACCELERATED);
-	//back_surface = SDL_LoadBMP("bground.bmp");
-	//back_texture = SDL_CreateTextureFromSurface(renderer, back_surface);
-
-}
-
 void Engine::Breakout::drawGame(void) {
     // // Draw coordinates for guidance
     // drawCoordinate();
-	//drawCircle();
+	drawCircle();
     // Draw ball,,,,,,,,,,,,,,,,99999999999999ls
     drawBalls();
     
@@ -369,17 +342,8 @@ void Engine::Breakout::drawCircle() {
 void Engine::Breakout::drawBalls(void) {
 	
     for (std::vector<Ball>::iterator it = balls.begin(); it != balls.end(); ) {
-        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); // use GL_LINE if no fill
-        glBegin(GL_POLYGON);
-        glColor3f(it->r, it->g, it->b);
-        for(int j = 0; j < CIRCLE_SEGMENTS; j++) {
-            float const theta = 2.0f * 3.1415926f * (float)j / (float)CIRCLE_SEGMENTS;
-            float const x = it->radius * cosf(theta);
-            float const y = it->radius * sinf(theta);
-            glVertex2f(x + it->xpos, y + it->ypos);
-        }
-        glEnd();
-		//UseShader(this->program);
+        
+		UseShader(this->program);
 		glBindVertexArray(VAO);
 		glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 		glBindTexture(GL_TEXTURE_2D, 0);
@@ -561,6 +525,13 @@ void Engine::Breakout::initBricks(void) {
         bricksLevel2();
 }
 
+void Engine::Breakout::resetBricks() {
+	vector<Brick>::iterator brick = bricks.begin();
+	while (brick != bricks.end()) {
+		bricks.erase(brick);
+	}
+}
+
 void Engine::Breakout::bricksLevel1(void) {
     Brick newBrick;
     newBrick.r = 0.95f;
@@ -574,14 +545,14 @@ void Engine::Breakout::bricksLevel1(void) {
         for (int j = 0; j < WALLCOLS; ++j) {
             // Set stronger bricks
             if (i+1 > ceil(WALLROWS / 2.0) - 2 && i < ceil(WALLROWS / 2.0) + 2 && j+2 > ceil(WALLCOLS / 2.0) - 3 && j < ceil(WALLCOLS / 2.0) + 3) {
-                newBrick.r = 1.0f;
-                newBrick.g = 0.5f;
-                newBrick.b = 0.5f;
+				newBrick.r = 0.8f;
+				newBrick.g = 0.7f;
+				newBrick.b = 0.7f;
                 newBrick.health = 2;
             } else {
-                newBrick.r = 0.95f;
-                newBrick.g = 0.95f;
-                newBrick.b = 0.95f;
+				newBrick.r = 1.0f;
+				newBrick.g = 0.9f;
+				newBrick.b = 0.8f;
                 newBrick.health = 1;
             }
             
@@ -601,9 +572,9 @@ void Engine::Breakout::bricksLevel2(void) {
         for (int j = 0; j < WALLCOLS; j++) {
             // Set stronger bricks
             if (i == 1 || i == WALLROWS - 2 || j == 1 || j == WALLCOLS - 2) {
-                newBrick.r = 1.0f;
-                newBrick.g = 0.5f;
-                newBrick.b = 0.5f;
+                newBrick.r = 0.3f;
+                newBrick.g = 0.8f;
+                newBrick.b = 0.8f;
                 newBrick.health = 2;
             } else {
                 newBrick.r = 0.95f;
@@ -620,11 +591,12 @@ void Engine::Breakout::bricksLevel2(void) {
 }
 
 void Engine::Breakout::drawGameStats(void) {
-    glBegin(GL_LINES);
-    // Bottom right (red)
-    glColor3f(1.0f, 0.0f, 0.0f);
+    glBegin(GL_QUADS);
+	glColor4f(0.0f, 0.0f, 0.0f, 0.2f);
     glVertex2f(20.0f, 30.0f);
     glVertex2f(WINWIDTH - 20.0f, 30.0f);
+	glVertex2f(WINWIDTH - 20.0f, 0.0f);
+	glVertex2f(20.0f, 0.0f);
     glEnd();
     
     float offset = 25.0f;
@@ -655,7 +627,7 @@ void Engine::Breakout::drawLife(float x, float y) {
 void Engine::Breakout::drawScore(void) {
     glPushMatrix();
     // Write score word
-    glColor3f(1.0f, 1.0f, 1.0f);
+    glColor3f(0.0f, 0.0f, 0.0f);
     glRasterPos2f(WINWIDTH - 120, 20);
     char buf[300], *p;
     p = buf;
@@ -664,7 +636,7 @@ void Engine::Breakout::drawScore(void) {
     // Print the score
     p = buf;
     sprintf_s(buf, "           %d", score);
-    glColor3f(1.0f, 1.0f, 1.0f);
+	glColor3f(0.0f, 0.0f, 0.0f);
     glRasterPos2f(WINWIDTH - 120, 20);
     do glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, *p); while(*(++p));
     glPopMatrix();
@@ -832,14 +804,18 @@ bool gotomenu = false;
 ImVec4 clear_color = ImColor(114, 144, 154);
 
 
-void Engine::Breakout::drawAfterGameGUI(char* gameresult) {
+void Engine::Breakout::drawAfterGameGUI(char* gameresult, int score) {
 	ImGui_ImplSdlGL3_NewFrame(this->window);
 	
 	{
-		ImGui::SetWindowSize(ImVec2(500, 100));
+		char buffer[33];
+		char resscore = _itoa_s(score, buffer, 10);
+		ImGui::SetWindowSize(ImVec2(600, 200));
 		ImGui::SetWindowPos(ImVec2(this->screenWidth / 2, this->screenHeight / 2));
 		ImGui::Begin("Game Over!!", &restart);
 		ImGui::Text(gameresult);
+		ImGui::Text("Skor anda adalah :");
+		ImGui::Text(buffer);
 		ImGui::Text("Main lagi gan?");
 		if (ImGui::Button("Ya")) restart ^= 1;
 		ImGui::SameLine(40);
@@ -848,6 +824,7 @@ void Engine::Breakout::drawAfterGameGUI(char* gameresult) {
 	}
 
 	if (restart) {
+		resetBricks();
 		score = 0;
 		level = 1;
 		reward = 100;
@@ -859,6 +836,7 @@ void Engine::Breakout::drawAfterGameGUI(char* gameresult) {
 	}
 
 	if (gotomenu) {
+		buildBackground();
 		showgame = false;
 		score = 0;
 		level = 1;
@@ -867,6 +845,7 @@ void Engine::Breakout::drawAfterGameGUI(char* gameresult) {
 		newBall(-2, -2);
 		gameState = Engine::Breakout::Menus;
 		gotomenu = false;
+		resetBricks();
 	}
 
 	ImGui::Render();
