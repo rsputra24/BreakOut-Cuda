@@ -1,0 +1,24 @@
+﻿  Breakout.cpp
+c:\users\reza\documents\visual studio 2015\projects\filkompecah\breakout.cpp(57): warning C4554: '&': check operator precedence for possible error; use parentheses to clarify precedence
+c:\users\reza\documents\visual studio 2015\projects\filkompecah\breakout.cpp(125): warning C4244: 'argument': conversion from 'const int' to 'GLfloat', possible loss of data
+c:\users\reza\documents\visual studio 2015\projects\filkompecah\breakout.cpp(126): warning C4244: 'argument': conversion from 'const int' to 'GLfloat', possible loss of data
+c:\users\reza\documents\visual studio 2015\projects\filkompecah\breakout.cpp(342): warning C4244: '=': conversion from 'double' to 'GLfloat', possible loss of data
+c:\users\reza\documents\visual studio 2015\projects\filkompecah\breakout.cpp(351): warning C4244: '=': conversion from 'double' to 'GLfloat', possible loss of data
+c:\users\reza\documents\visual studio 2015\projects\filkompecah\breakout.cpp(360): warning C4244: '=': conversion from 'double' to 'GLfloat', possible loss of data
+c:\users\reza\documents\visual studio 2015\projects\filkompecah\breakout.cpp(369): warning C4244: '=': conversion from 'double' to 'GLfloat', possible loss of data
+c:\users\reza\documents\visual studio 2015\projects\filkompecah\breakout.cpp(528): warning C4554: '&': check operator precedence for possible error; use parentheses to clarify precedence
+c:\users\reza\documents\visual studio 2015\projects\filkompecah\breakout.cpp(596): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+c:\users\reza\documents\visual studio 2015\projects\filkompecah\breakout.cpp(844): warning C4101: 'infoLog': unreferenced local variable
+c:\users\reza\documents\visual studio 2015\projects\filkompecah\breakout.cpp(843): warning C4101: 'success': unreferenced local variable
+  DearImGui_SDL.lib(imgui.obj) : MSIL .netmodule or module compiled with /GL found; restarting link with /LTCG; add /LTCG to the link command line to improve linker performance
+LINK : warning LNK4075: ignoring '/INCREMENTAL' due to '/LTCG' specification
+Breakout.obj : warning LNK4075: ignoring '/EDITANDCONTINUE' due to '/OPT:LBR' specification
+LINK : warning LNK4098: defaultlib 'MSVCRT' conflicts with use of other libs; use /NODEFAULTLIB:library
+  Generating code
+  Finished generating code
+DearImGui_SDL.lib(imgui.obj) : warning LNK4099: PDB 'DearImGui.pdb' was not found with 'DearImGui_SDL.lib(imgui.obj)' or at 'C:\Users\Reza\documents\visual studio 2015\Projects\FilkomPecah\Debug\DearImGui.pdb'; linking object as if no debug info
+DearImGui_SDL.lib(imgui_demo.obj) : warning LNK4099: PDB 'DearImGui.pdb' was not found with 'DearImGui_SDL.lib(imgui_demo.obj)' or at 'C:\Users\Reza\documents\visual studio 2015\Projects\FilkomPecah\Debug\DearImGui.pdb'; linking object as if no debug info
+DearImGui_SDL.lib(imgui_impl_sdl_gl3.obj) : warning LNK4099: PDB 'DearImGui.pdb' was not found with 'DearImGui_SDL.lib(imgui_impl_sdl_gl3.obj)' or at 'C:\Users\Reza\documents\visual studio 2015\Projects\FilkomPecah\Debug\DearImGui.pdb'; linking object as if no debug info
+DearImGui_SDL.lib(imgui_draw.obj) : warning LNK4099: PDB 'DearImGui.pdb' was not found with 'DearImGui_SDL.lib(imgui_draw.obj)' or at 'C:\Users\Reza\documents\visual studio 2015\Projects\FilkomPecah\Debug\DearImGui.pdb'; linking object as if no debug info
+  FilkomPecah.vcxproj -> C:\Users\Reza\documents\visual studio 2015\Projects\FilkomPecah\Debug\FilkomPecah.exe
+  FilkomPecah.vcxproj -> C:\Users\Reza\documents\visual studio 2015\Projects\FilkomPecah\Debug\FilkomPecah.pdb (Partial PDB)
