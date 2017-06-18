@@ -642,24 +642,6 @@ void Engine::Breakout::drawScore(void) {
     glPopMatrix();
 }
 
-void Engine::Breakout::drawCoordinate(void) {
-    glBegin(GL_LINES);
-        // Top left (white)
-        glColor3f(1.0f, 1.0f, 1.0f);
-        glVertex2f(20.0f, 10.0f);
-        glVertex2f(20.0f, 30.0f);
-        glVertex2f(10.0f, 20.0f);
-        glVertex2f(30.0f, 20.0f);
-    
-        // Bottom right (red)
-        glColor3f(1.0f, 0.0f, 0.0f);
-        glVertex2f(WINWIDTH - 20.0f, WINHEIGHT - 10.0f);
-        glVertex2f(WINWIDTH - 20.0f, WINHEIGHT - 30.0f);
-        glVertex2f(WINWIDTH - 10.0f, WINHEIGHT - 20.0f);
-        glVertex2f(WINWIDTH - 30.0f, WINHEIGHT - 20.0f);
-    glEnd();
-}
-
 void Engine::Breakout::reshape(int width, int height) {
     if (width != WINWIDTH || height != WINHEIGHT)
         glutReshapeWindow(WINWIDTH, WINHEIGHT);
