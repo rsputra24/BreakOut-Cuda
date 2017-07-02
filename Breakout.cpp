@@ -37,8 +37,9 @@ void Engine::Breakout::display(void) {
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 	
-	renderBackground();
-  
+	//renderBackground();
+	//drawGameStats();
+    drawBackground();
 
     // Select which state of the game to display
     switch (gameState) {
@@ -83,7 +84,7 @@ void Engine::Breakout::display(void) {
             break;
         
         default:
-			
+			//drawBackground();
             break;
 			//glDisable(GL_TEXTURE_2D);
     }
@@ -99,7 +100,14 @@ void recomputeFrame(int value) {
 
 void Engine::Breakout::renderBackground() {
 
-	
+	/*mat4 model, model2, view, projection;
+	model = translate(model, vec3(position.x, position.y + 1, position.z));
+	model = rotate(model, rotation, axisRotation);
+	model2 = scale(model2, vec3(35, 0, 35));
+	// LookAt camera (position, target/direction, up)
+	view = lookAt(vec3(position.x + 10, position.y + 15, position.z), vec3(position.x, position.y, position.z), vec3(0.0f, 1.0f, 0.0f));
+	// Perspective projection
+	projection = perspective(45.0f, (GLfloat)this->screenWidth / (GLfloat)this->screenHeight, 0.1f, 1000.0f);*/
 
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -108,14 +116,18 @@ void Engine::Breakout::renderBackground() {
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, textureBG);
 
-	
+	//GLint model2Loc = glGetUniformLocation(this->programBG, "model");
+	//GLint view2Loc = glGetUniformLocation(this->programBG, "view");
+	//GLint proj2Loc = glGetUniformLocation(this->programBG, "projection");
 	UseShader(this->programBG);
-	
+	//glUniformMatrix4fv(view2Loc, 1, GL_FALSE, glm::value_ptr(view));
+	//glUniformMatrix4fv(proj2Loc, 1, GL_FALSE, glm::value_ptr(projection));
+	//glUniformMatrix4fv(model2Loc, 1, GL_FALSE, glm::value_ptr(model2));
 	glBindVertexArray(VAO);
 	glDrawElements(GL_QUADS, 4, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);
 
-	glBindTexture(GL_TEXTURE_2D, 0); 
+	glBindTexture(GL_TEXTURE_2D, 0); // Unbind texture when done, so we won't accidentily mess up our texture.
 	glDisable(GL_BLEND);
 	
 }
@@ -183,9 +195,11 @@ void Engine::Breakout::init(void) {
 	ImGui_ImplSdlGL3_Init(this->window);
 	
 	glewInit();
+	//drawCircle();
 
-	buildBackgroundImage();
-	
+	//buildBackgroundImage();
+	buildBackground();
+
     score = 0;
     level = 1;
     reward = 100;
@@ -208,10 +222,43 @@ void Engine::Breakout::init(void) {
     gameState = Engine::Breakout::Menus;
 }
 
+void Engine::Breakout::buildBackground() {
+	glGenTextures(1, &textureBG);
+	glBindTexture(GL_TEXTURE_2D, textureBG);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	int width, height;
+	unsigned char* image = SOIL_load_image("bg.jpg", &width, &height, 0, SOIL_LOAD_RGBA);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
+	SOIL_free_image_data(image);
+	//glBindTexture(GL_TEXTURE_2D, 0);
+}
+
+void Engine::Breakout::drawBackground(void) {
+    //glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    glBegin(GL_QUADS);
+	//buildBackground();
+    // Top color
+	glBindTexture(GL_TEXTURE_2D, textureBG);
+    glColor3f(1.0f, 1.0f, 1.0f);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex2f(0, 0);
+	glTexCoord2f(1.0, 0.0f);;
+	glVertex2f(WINWIDTH, 0);
+    // Bottom color
+    glColor3f(0.0f, 0.0f, 0.0f);
+	glTexCoord2f(1.0f,1.0f);
+	glVertex2f(WINWIDTH, WINHEIGHT);
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex2f(0.0f, WINHEIGHT);
+    glEnd();
+	glDisable(GL_TEXTURE_2D);
+}
+
 void Engine::Breakout::drawGame(void) {
     // // Draw coordinates for guidance
     // drawCoordinate();
-	drawCircle();
+	//drawCircle();
     // Draw ball,,,,,,,,,,,,,,,,99999999999999ls
     drawBalls();
     
@@ -341,9 +388,21 @@ void Engine::Breakout::drawCircle() {
 
 void Engine::Breakout::drawBalls(void) {
 	
+	
+
     for (std::vector<Ball>::iterator it = balls.begin(); it != balls.end(); ) {
-        
-		UseShader(this->program);
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); // use GL_LINE if no fill
+        glBegin(GL_POLYGON);
+        glColor3f(it->r, it->g, it->b);
+		//kernel_wrapper2(CIRCLE_SEGMENTS, theta_d, &x_d, &y_d, it);
+        for(int j = 0; j < CIRCLE_SEGMENTS; j++) {
+            float const theta = 2.0f * 3.1415926f * (float)j / (float)CIRCLE_SEGMENTS;
+            float const x = it->radius * cosf(theta);
+            float const y = it->radius * sinf(theta);
+            glVertex2f(x + it->xpos, y + it->ypos);
+        }
+        glEnd();
+		//UseShader(this->program);
 		glBindVertexArray(VAO);
 		glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 		glBindTexture(GL_TEXTURE_2D, 0);
@@ -526,10 +585,7 @@ void Engine::Breakout::initBricks(void) {
 }
 
 void Engine::Breakout::resetBricks() {
-	vector<Brick>::iterator brick = bricks.begin();
-	while (brick != bricks.end()) {
-		bricks.erase(brick);
-	}
+	bricks.clear();
 }
 
 void Engine::Breakout::bricksLevel1(void) {
@@ -610,18 +666,38 @@ void Engine::Breakout::drawGameStats(void) {
 void Engine::Breakout::drawLife(float x, float y) {
     // Scale the heart symbol
     float const scale = 0.5f;
+
+	float *xx, *yy;
+	float *xx_d, *yy_d;
+
+	xx =(float*) malloc(sizeof(float)*CIRCLE_SEGMENTS);
+	yy = (float*)malloc(sizeof(float)*CIRCLE_SEGMENTS);
+
+	cudaMalloc((void**)&xx_d, sizeof(float)*CIRCLE_SEGMENTS);
+	cudaMalloc((void**)&yy_d, sizeof(float)*CIRCLE_SEGMENTS);
+
     
-    // Heart symbol equations from Walfram Mathworld: http://mathworld.wolfram.com/HeartCurve.html
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     glBegin(GL_POLYGON);
     glColor3f(1.0f, 0.2f, 0.2f);
-    for(int j = 0; j < CIRCLE_SEGMENTS; j++) {
+
+    /*for(int j = 0; j < CIRCLE_SEGMENTS; j++) {
         float const theta = 2.0f * 3.1415926f * (float)j / (float)CIRCLE_SEGMENTS;
         float const xx = scale * 16.0f * sinf(theta) * sinf(theta) * sinf(theta);
         float const yy = -1 * scale * (13.0f * cosf(theta) - 5.0f * cosf(2.0f * theta) - 2 * cosf(3.0f * theta) - cosf(4.0f * theta));
         glVertex2f(x + xx, y + yy);
-    }
+    }*/
+
+	kernel_wrapper(CIRCLE_SEGMENTS, xx_d, yy_d);
+
+	cudaMemcpy(xx, xx_d, sizeof(float)*CIRCLE_SEGMENTS, cudaMemcpyDeviceToHost);
+	cudaMemcpy(yy, yy_d, sizeof(float)*CIRCLE_SEGMENTS, cudaMemcpyDeviceToHost);
+
+	for (int j = 0; j < CIRCLE_SEGMENTS; j++)
+		glVertex2f(x + xx[j], y + yy[j]);
+
     glEnd();
+	
 }
 
 void Engine::Breakout::drawScore(void) {
@@ -640,6 +716,24 @@ void Engine::Breakout::drawScore(void) {
     glRasterPos2f(WINWIDTH - 120, 20);
     do glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, *p); while(*(++p));
     glPopMatrix();
+}
+
+void Engine::Breakout::drawCoordinate(void) {
+    glBegin(GL_LINES);
+        // Top left (white)
+        glColor3f(1.0f, 1.0f, 1.0f);
+        glVertex2f(20.0f, 10.0f);
+        glVertex2f(20.0f, 30.0f);
+        glVertex2f(10.0f, 20.0f);
+        glVertex2f(30.0f, 20.0f);
+    
+        // Bottom right (red)
+        glColor3f(1.0f, 0.0f, 0.0f);
+        glVertex2f(WINWIDTH - 20.0f, WINHEIGHT - 10.0f);
+        glVertex2f(WINWIDTH - 20.0f, WINHEIGHT - 30.0f);
+        glVertex2f(WINWIDTH - 10.0f, WINHEIGHT - 20.0f);
+        glVertex2f(WINWIDTH - 30.0f, WINHEIGHT - 20.0f);
+    glEnd();
 }
 
 void Engine::Breakout::reshape(int width, int height) {

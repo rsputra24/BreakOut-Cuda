@@ -22,6 +22,7 @@
 #include <unordered_map>
 #include <GLM/glm.hpp>
 #include <GLM/gtc/matrix_transform.hpp>
+#include "kernel.h"
 
 #include <GLM\gtc\type_ptr.hpp>
 #include <glm/gtx/vector_angle.hpp>
@@ -41,6 +42,9 @@ using namespace irrklang;
 // My includes
 #include "MyObjects.h"      // Game-specific objects
 #include "config.h"         // Game configurations
+
+
+
 
 enum class WindowFlag { WINDOWED, FULLSCREEN, EXCLUSIVE_FULLSCREEN, BORDERLESS };
 
@@ -66,7 +70,7 @@ public:
 	void buildBackgroundImage(void);
 	void renderBackground(void);
 	void drawGUI(void);
-	void drawAfterGameGUI(char* gameresult);
+	void drawAfterGameGUI(char* gameresult, int score);
 	void display(void);
 	void init(void);
 	void reshape(int width, int height);
@@ -75,6 +79,7 @@ public:
 	void keyStroke(unsigned char key, int x, int y);
 	void specialKeyPos(int key, int x, int y);
 	void startGame(string windowTitle, unsigned int screenWidth, unsigned int screenHeight, bool vsync, WindowFlag windowFlag, unsigned int targetFrameRate, float timeScale);
+	void Engine::Breakout::buildBackground();
 
 private:
 	// Game statistics
@@ -127,6 +132,7 @@ private:
 	bool brickCollision(Iterator it, Iterator br);
 	template <typename Iterator>
 	Iterator hitBrick(Iterator brick);
+	void resetBricks();
 	void drawLife(float x, float y);
 	void drawGameStats(void);
 	void drawScore(void);
